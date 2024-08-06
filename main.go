@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"time"
@@ -11,6 +10,7 @@ import (
 	"github.com/caarlos0/env/v11"
 	"github.com/mymmrac/telego"
 	tu "github.com/mymmrac/telego/telegoutil"
+	"github.com/rs/zerolog/log"
 )
 
 var (
@@ -48,12 +48,12 @@ type Seat struct {
 func main() {
 	config = new(ConfigStruct)
 	if err := env.Parse(config); err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 
 	bot, err := telego.NewBot(config.TelegramToken)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal().Err(err)
 	}
 
 	log.Printf("Start checking...\n")
@@ -78,7 +78,7 @@ func main() {
 						log.Printf("Failed to send message: %v\n", err)
 					}
 				}
-				fmt.Printf("PlaySeq: %s, RemainCnt: %d, SeatGrade: %s, SeatGradeName: %s\n", s.PlaySeq, s.RemainCnt, s.SeatGrade, s.SeatGradeName)
+				log.Printf("PlaySeq: %s, RemainCnt: %d, SeatGrade: %s, SeatGradeName: %s\n", s.PlaySeq, s.RemainCnt, s.SeatGrade, s.SeatGradeName)
 			}
 		}
 

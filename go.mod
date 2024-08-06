@@ -5,6 +5,7 @@ go 1.22.5
 require (
 	github.com/caarlos0/env/v11 v11.2.0
 	github.com/mymmrac/telego v0.31.0
+	github.com/rs/zerolog v1.33.0
 )
 
 require (
@@ -17,6 +18,8 @@ require (
 	github.com/grbit/go-json v0.11.0 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.6 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/savsgio/gotils v0.0.0-20240704082632-aef3928b8a38 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
