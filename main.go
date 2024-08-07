@@ -29,6 +29,7 @@ type ConfigStruct struct {
 	TelegramChatID int64  `env:"TELEGRAM_CHAT_ID,required"`
 
 	SleepDuration time.Duration `env:"SLEEP_DURATION" envDefault:"5s"`
+	RenotifyAfter time.Duration `env:"RENOTIFY_AFTER" envDefault:"1m"`
 }
 
 type SeatResponse struct {
@@ -63,6 +64,7 @@ func main() {
 		log.Printf("Failed to send message: %v\n", err)
 	}
 
+	seatDataCache := make(map[Seat]time.Time)
 	for {
 		seatData, err := checkSeat()
 		if err != nil {
@@ -73,6 +75,16 @@ func main() {
 
 		for _, seat := range seatData {
 			for _, s := range seat.RemainSeat {
+				now := time.Now()
+				if t, ok := seatDataCache[s]; ok {
+					if now.Sub(t) < config.RenotifyAfter {
+						continue
+					} else {
+						seatDataCache[s] = now
+					}
+				} else {
+					seatDataCache[s] = now
+				}
 				if s.RemainCnt > 0 {
 					msg := fmt.Sprintf("Seat Found!!!: PlaySeq: %s, RemainCnt: %d, SeatGradeName: %s\n", s.PlaySeq, s.RemainCnt, s.SeatGradeName)
 					if _, err := bot.SendMessage(tu.Message(tu.ID(config.TelegramChatID), msg)); err != nil {
