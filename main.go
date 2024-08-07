@@ -25,8 +25,8 @@ type ConfigStruct struct {
 	GoodsID      string `env:"GOODS_ID,required"`
 	PlaySeqCount int    `env:"PLAY_SEQ_COUNT" envDefault:"1"`
 
-	TelegramToken  string `env:"TELEGRAM_TOKEN,required"`
-	TelegramChatID int64  `env:"TELEGRAM_CHAT_ID,required"`
+	TelegramToken   string  `env:"TELEGRAM_TOKEN,required"`
+	TelegramChatIds []int64 `env:"TELEGRAM_CHAT_IDS,required"`
 
 	SleepDuration time.Duration `env:"SLEEP_DURATION" envDefault:"5s"`
 	RenotifyAfter time.Duration `env:"RENOTIFY_AFTER" envDefault:"1m"`
@@ -60,8 +60,10 @@ func main() {
 
 	log.Printf("Start checking...\n")
 
-	if _, err := bot.SendMessage(tu.Message(tu.ID(config.TelegramChatID), "Start checking...")); err != nil {
-		log.Printf("Failed to send message: %v\n", err)
+	for _, chatId := range config.TelegramChatIds {
+		if _, err := bot.SendMessage(tu.Message(tu.ID(chatId), "Start checking...")); err != nil {
+			log.Printf("Failed to send message: %v\n", err)
+		}
 	}
 
 	seatDataCache := make(map[Seat]time.Time)
@@ -87,8 +89,10 @@ func main() {
 				}
 				if s.RemainCnt > 0 {
 					msg := fmt.Sprintf("Seat Found!!!: PlaySeq: %s, RemainCnt: %d, SeatGradeName: %s\n", s.PlaySeq, s.RemainCnt, s.SeatGradeName)
-					if _, err := bot.SendMessage(tu.Message(tu.ID(config.TelegramChatID), msg)); err != nil {
-						log.Printf("Failed to send message: %v\n", err)
+					for _, chatId := range config.TelegramChatIds {
+						if _, err := bot.SendMessage(tu.Message(tu.ID(chatId), msg)); err != nil {
+							log.Printf("Failed to send message: %v\n", err)
+						}
 					}
 				}
 				log.Printf("PlaySeq: %s, RemainCnt: %d, SeatGrade: %s, SeatGradeName: %s\n", s.PlaySeq, s.RemainCnt, s.SeatGrade, s.SeatGradeName)
