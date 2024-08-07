@@ -14,9 +14,7 @@ import (
 )
 
 var (
-	URL        = "https://api-ticketfront.interpark.com/v1/goods/%s/playSeq/PlaySeq/%03d/REMAINSEAT"
-	GOODSID    = "24011105"
-	PlaySeqCnt = 2
+	URL = "https://api-ticketfront.interpark.com/v1/goods/%s/playSeq/PlaySeq/%03d/REMAINSEAT"
 )
 
 var (
@@ -24,6 +22,9 @@ var (
 )
 
 type ConfigStruct struct {
+	GoodsID      string `env:"GOODS_ID,required"`
+	PlaySeqCount int    `env:"PLAY_SEQ_COUNT" envDefault:"1"`
+
 	TelegramToken  string `env:"TELEGRAM_TOKEN,required"`
 	TelegramChatID int64  `env:"TELEGRAM_CHAT_ID,required"`
 
@@ -89,8 +90,8 @@ func main() {
 
 func checkSeat() ([]*SeatData, error) {
 	var seatData []*SeatData
-	for i := 1; i <= PlaySeqCnt; i++ {
-		urlStr := fmt.Sprintf(URL, GOODSID, i)
+	for i := 1; i <= config.PlaySeqCount; i++ {
+		urlStr := fmt.Sprintf(URL, config.GoodsID, i)
 		u, err := url.Parse(urlStr)
 		if err != nil {
 			return nil, err
@@ -120,12 +121,6 @@ func checkSeat() ([]*SeatData, error) {
 		if err := json.NewDecoder(resp.Body).Decode(&seatResp); err != nil {
 			return nil, err
 		}
-
-		/*
-			for _, seat := range seatResp.Data.RemainSeat {
-				fmt.Printf("PlaySeq: %s, RemainCnt: %d, SeatGrade: %s, SeatGradeName: %s\n", seat.PlaySeq, seat.RemainCnt, seat.SeatGrade, seat.SeatGradeName)
-			}
-		*/
 
 		seatData = append(seatData, &seatResp.Data)
 	}
