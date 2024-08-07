@@ -26,7 +26,7 @@ type ConfigStruct struct {
 	PlaySeqCount int    `env:"PLAY_SEQ_COUNT" envDefault:"1"`
 
 	TelegramToken   string  `env:"TELEGRAM_TOKEN,required"`
-	TelegramChatIds []int64 `env:"TELEGRAM_CHAT_IDS,required"`
+	TelegramChatIds []int64 `env:"TELEGRAM_CHAT_IDS,required" envSeparator:","`
 
 	SleepDuration time.Duration `env:"SLEEP_DURATION" envDefault:"5s"`
 	RenotifyAfter time.Duration `env:"RENOTIFY_AFTER" envDefault:"1m"`
